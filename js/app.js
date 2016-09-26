@@ -33,18 +33,23 @@ $(function() {
         $allMissed = $('tbody .missed-col'),
         $allCheckboxes = $('tbody input');
 
+    // Reload attendance from local storage
+    function reloadAttendance() {
+        attendance = JSON.parse(localStorage.attendance);
+    }
+
     // Count a student's missed days
     function countMissing() {
         $allMissed.each(function() {
             var studentRow = $(this).parent('tr'),
-                dayChecks = $(studentRow).children('td').children('input'),
+                studentName = studentRow.find('td:first').text(),
                 numMissed = 0;
 
-            dayChecks.each(function() {
-                if (!$(this).prop('checked')) {
+            for (dayChecks of attendance[studentName]) {
+                if (dayChecks === false) {
                     numMissed++;
                 }
-            });
+            }
 
             $(this).text(numMissed);
         });
@@ -76,8 +81,9 @@ $(function() {
             });
         });
 
-        countMissing();
         localStorage.attendance = JSON.stringify(newAttendance);
+        reloadAttendance();
+        countMissing();
     });
 
     countMissing();
