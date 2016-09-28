@@ -58,6 +58,27 @@ $(function() {
         students.push(new Student(name, days));
     });
 
+    function insertNameCell(row, name) {
+        nameCell = row.insertCell();
+        nameCell.innerHTML = name;
+        nameCell.classList.add('name-col');
+    }
+
+    function insertAttendCell(row, dayCheck) {
+        attendCell = row.insertCell();
+        attendCell.innerHTML = HTMLattendCell;
+        checkbox = attendCell.getElementsByTagName('input')[0];
+        if (dayCheck == true) {
+            checkbox.setAttribute('checked', 'true');
+        }
+    }
+
+    function insertMissedCell(row) {
+        missedCell = row.insertCell();
+        missedCell.innerHTML = '0';
+        missedCell.classList.add('missed-col');
+    }
+
     // create UI from student array
     attendanceSheet = document.getElementById('attendance-sheet-body')
     var nameCell, attendCell, missedCell,
@@ -67,22 +88,13 @@ $(function() {
         var row = attendanceSheet.insertRow();
         row.classList.add('student');
 
-        nameCell = row.insertCell();
-        nameCell.innerHTML = student.name;
-        nameCell.classList.add('name-col');
+        insertNameCell(row, student.name);
 
         for (dayCheck of student.dayChecks) {
-            attendCell = row.insertCell();
-            attendCell.innerHTML = HTMLattendCell;
-            checkbox = attendCell.getElementsByTagName('input')[0];
-            if (dayCheck == true) {
-                checkbox.setAttribute('checked', 'true');
-            }
+            insertAttendCell(row, dayCheck);
         }
 
-        missedCell = row.insertCell();
-        missedCell.innerHTML = '0';
-        missedCell.classList.add('missed-col');
+        insertMissedCell(row);
     }
 
     // Count a student's missed days
