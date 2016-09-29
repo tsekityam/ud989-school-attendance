@@ -97,22 +97,32 @@ $(function() {
         insertMissedCell(row);
     }
 
-    // Count a student's missed days
-    $allMissed = $('tbody .missed-col');
-    function countMissing() {
-        $allMissed.each(function() {
-            var studentRow = $(this).parent('tr'),
-                studentName = studentRow.find('td:first').text(),
-                numMissed = 0;
-
-            for (dayChecks of attendance[studentName]) {
-                if (dayChecks === false) {
-                    numMissed++;
-                }
+    // Get the missing cell of student
+    var $studentRows = $('tbody .student');
+    function getMissedCell(name) {
+        for (var i = 0; i < $studentRows.length; i++) {
+            if ($studentRows[i].firstChild.textContent === name) {
+                return $studentRows[i].lastChild;
             }
+        }
+    }
 
-            $(this).text(numMissed);
-        });
+    // update a student's missed days
+    function updateMissing(name) {
+        var numMissed = 0;
+        for (dayChecks of attendance[name]) {
+            if (dayChecks === false) {
+                numMissed++;
+            }
+        }
+        getMissedCell(name).textContent = numMissed;
+    }
+
+    // update all studnets' missed days
+    function updateAllMissing() {
+        for (var i = 0; i < students.length; i++) {
+            updateMissing(students[i].name);
+        }
     }
 
     // When a checkbox is clicked, update localStorage
@@ -134,10 +144,10 @@ $(function() {
 
         localStorage.attendance = JSON.stringify(newAttendance);
         reloadAttendance();
-        countMissing();
+        updateAllMissing();
     });
 
-    countMissing();
+    updateAllMissing();
 }());
 
 function reset() {
