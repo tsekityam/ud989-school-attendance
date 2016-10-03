@@ -128,21 +128,16 @@ $(function() {
     // When a checkbox is clicked, update localStorage
     $allCheckboxes = $('tbody input');
     $allCheckboxes.on('click', function() {
-        var studentRows = $('tbody .student'),
-            newAttendance = {};
+        var $studentRow = $(this).parent().parent(),
+            $studentName = $studentRow.children('.name-col').text(),
+            $allCheckboxes = $studentRow.children('td').children('input');
 
-        studentRows.each(function() {
-            var name = $(this).children('.name-col').text(),
-                $allCheckboxes = $(this).children('td').children('input');
-
-            newAttendance[name] = [];
-
-            $allCheckboxes.each(function() {
-                newAttendance[name].push($(this).prop('checked'));
-            });
+        attendance[$studentName] = [];
+        $allCheckboxes.each(function() {
+            attendance[$studentName].push($(this).prop('checked'));
         });
 
-        localStorage.attendance = JSON.stringify(newAttendance);
+        localStorage.attendance = JSON.stringify(attendance);
         reloadAttendance();
         updateAllMissing();
     });
