@@ -61,4 +61,86 @@ model.clearLocalStorage = function() {
     localStorage.clear();
 };
 
-model.init();
+// the object between model and view
+var octopus = {};
+
+octopus.init = function() {
+    model.init();
+    view.init();
+};
+
+octopus.getNumberOfStudent = function() {
+    return model.students.length;
+};
+
+octopus.getStudentNameByIndex = function(index) {
+    return model.students[index].name;
+};
+
+octopus.isStudentMissing = function(name, day) {
+    return model.getStudentByName(name).attendance[day];
+};
+
+octopus.getStudentMissingCount = function(name) {
+    var student = model.getStudentByName(name);
+    var missingCount = 0;
+    for (var i = 0; i < student.attendance.length; i++) {
+        if (student.attendance[i] == false) {
+            missingCount++;
+        }
+    }
+    return missingCount;
+};
+
+// view, the one modifying the document
+var view = {};
+var $attendanceSheet = $("#attendance-sheet-body");
+
+view.init = function() {
+    var studentName;
+
+    // DOM elements
+    var row;
+    var data;
+    var input;
+
+    for (var i = 0; i < octopus.getNumberOfStudent(); i++) {
+        studentName = octopus.getStudentNameByIndex(i);
+
+        // create row
+        row = document.createElement("tr");
+        $(row).addClass("student");
+
+        // create name column
+        data = document.createElement("td");
+        $(data).addClass("name-col");
+        $(data).append(studentName);
+
+        $(row).append(data);
+
+        // create attendance columns
+        for (var j = 0; j < 12; j++) {
+            data = document.createElement("td");
+            $(data).addClass("attend-col");
+
+            input = document.createElement("input");
+            $(input).attr("type", "checkbox");
+            $(input).attr("checked", octopus.isStudentMissing(studentName, j));
+
+            $(data).append(input);
+            $(row).append(data);
+        }
+
+        //create missed column
+        data = document.createElement("td");
+        $(data).addClass("missed-col");
+        $(data).append(octopus.getStudentMissingCount(studentName));
+
+        $(row).append(data);
+
+        $attendanceSheet.append(row);
+    }
+};
+
+// program starts here
+octopus.init();
