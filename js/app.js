@@ -30,15 +30,21 @@ var model = {
 };
 
 model.init = function() {
-    this.students.push(new Student("Honoka Kosaka"));
-    this.students.push(new Student("Eli Ayase"));
-    this.students.push(new Student("Kotori Minami"));
-    this.students.push(new Student("Umi Sonoda"));
-    this.students.push(new Student("Rin Hoshizora "));
-    this.students.push(new Student("Maki Nishikino"));
-    this.students.push(new Student("Nozomi Tojo"));
-    this.students.push(new Student("Hanayo Koizumi"));
-    this.students.push(new Student("Nico Yazawa"));
+    model.loadFromLocalStorage();
+
+    if (this.students.length == 0) {
+        this.students.push(new Student("Honoka Kosaka"));
+        this.students.push(new Student("Eli Ayase"));
+        this.students.push(new Student("Kotori Minami"));
+        this.students.push(new Student("Umi Sonoda"));
+        this.students.push(new Student("Rin Hoshizora "));
+        this.students.push(new Student("Maki Nishikino"));
+        this.students.push(new Student("Nozomi Tojo"));
+        this.students.push(new Student("Hanayo Koizumi"));
+        this.students.push(new Student("Nico Yazawa"));
+
+        model.saveToLocalStorage();
+    }
 };
 
 model.getStudentByName = function(name) {
@@ -54,7 +60,9 @@ model.saveToLocalStorage = function() {
 };
 
 model.loadFromLocalStorage = function() {
-    this.students = JSON.parse(localStorage.students);
+    if (localStorage.students) {
+        this.students = JSON.parse(localStorage.students);
+    }
 };
 
 model.clearLocalStorage = function() {
