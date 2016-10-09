@@ -53,6 +53,12 @@ model.clearLocalStorage = function() {
     localStorage.clear();
 };
 
+model.updateStudentMissing = function(name, day, isAttended) {
+    var student = this.getStudentByName(name);
+    student.attendance[day] = isAttended;
+    model.saveToLocalStorage();
+};
+
 // the object between model and view
 var octopus = {};
 
@@ -82,6 +88,11 @@ octopus.getStudentMissingCount = function(name) {
         }
     }
     return missingCount;
+};
+
+octopus.updateStudentMissing = function(name, day, isAttended) {
+    model.updateStudentMissing(name, day, isAttended);
+    view.updateMissingCount(name);
 };
 
 // view, the one modifying the document
@@ -118,6 +129,12 @@ view.init = function() {
             input = document.createElement("input");
             $(input).attr("type", "checkbox");
             $(input).attr("checked", octopus.isStudentMissing(studentName, j));
+            $(input).change(function() {
+                var row = $(this).parent().parent();
+                var studentName = row.find(".name-col").text();
+                var day = $(this).parent().index() - 1; // the 0th element is .td, so the index of tr elements starts from 1
+                octopus.updateStudentMissing(studentName, day, this.checked);
+            });
 
             $(data).append(input);
             $(row).append(data);
@@ -132,6 +149,21 @@ view.init = function() {
 
         $attendanceSheet.append(row);
     }
+};
+
+view.updateMissingCount = function(name) {
+    var missedCell = this.getMissedCell(name);
+    missedCell.text(octopus.getStudentMissingCount(name));
+};
+
+view.getMissedCell = function(name) {
+    var missedCell;
+    $attendanceSheet.find("tr").each(function() {
+        if ($(this).find(".name-col").text() === name) {
+            missedCell = $(this).find(".missed-col")
+        }
+    });
+    return missedCell;
 };
 
 // program starts here
