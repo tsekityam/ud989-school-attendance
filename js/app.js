@@ -143,11 +143,12 @@ view.init = function() {
         //create missed column
         data = document.createElement("td");
         $(data).addClass("missed-col");
-        $(data).append(octopus.getStudentMissingCount(studentName));
 
         $(row).append(data);
 
         $attendanceSheet.append(row);
+
+        this.updateMissingCount(studentName);
     }
 };
 
